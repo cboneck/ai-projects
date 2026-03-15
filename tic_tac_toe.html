@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .container { text-align: center; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        #status { font-size: 1.3rem; margin-bottom: 20px; min-height: 2rem; }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-template-rows: repeat(3, 120px);
+            gap: 6px;
+            margin: 0 auto 25px;
+            background: #16213e;
+            padding: 6px;
+            border-radius: 10px;
+        }
+        .cell {
+            background: #0f3460;
+            border: none;
+            border-radius: 8px;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cell:hover { background: #1a4a7a; }
+        .cell.x { color: #e94560; }
+        .cell.o { color: #533483; }
+        .cell.win { background: #2d6a4f; }
+        #restart {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background: #e94560;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #restart:hover { background: #c73350; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div id="status">Player X's turn</div>
+        <div class="board" id="board"></div>
+        <button id="restart" onclick="init()">Restart</button>
+    </div>
+    <script>
+        const board = document.getElementById("board");
+        const status = document.getElementById("status");
+        let cells, current, gameOver;
+
+        const wins = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        function init() {
+            cells = Array(9).fill("");
+            current = "X";
+            gameOver = false;
+            status.textContent = "Player X's turn";
+            board.innerHTML = "";
+            for (let i = 0; i < 9; i++) {
+                const btn = document.createElement("button");
+                btn.className = "cell";
+                btn.addEventListener("click", () => play(i));
+                board.appendChild(btn);
+            }
+        }
+
+        function play(i) {
+            if (gameOver || cells[i]) return;
+            cells[i] = current;
+            const btn = board.children[i];
+            btn.textContent = current;
+            btn.classList.add(current.toLowerCase());
+
+            const winCombo = wins.find(w => w.every(j => cells[j] === current));
+            if (winCombo) {
+                winCombo.forEach(j => board.children[j].classList.add("win"));
+                status.textContent = `Player ${current} wins!`;
+                gameOver = true;
+                return;
+            }
+            if (cells.every(c => c)) {
+                status.textContent = "It's a draw!";
+                gameOver = true;
+                return;
+            }
+            current = current === "X" ? "O" : "X";
+            status.textContent = `Player ${current}'s turn`;
+        }
+
+        init();
+    </script>
+</body>
+</html>
